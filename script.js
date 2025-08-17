@@ -21,10 +21,10 @@ button.forEach(btn => {
                 }
             }
         } else if (buttonValue === "ans") {
-            if (display.value === "0" || display.value === "Error") {
-                display.value = lastAnswer;
-            } else {
-                display.value += lastAnswer;
+            const lastChar = display.value.slice(-1);
+            const operators = ['+', '-', '*', '/', '%'];
+            if (display.value === "" || operators.includes(lastChar)) {
+                 display.value += lastAnswer;
             }
         } else if (buttonValue === '.') {
             const numbers = display.value.split(/[\+\-\*\/%]/);
@@ -43,12 +43,8 @@ button.forEach(btn => {
 });
 
 function calculate(expression) {
-    const tokens = expression.match(/(\d+\.?\d*|[\+\-\*\/%])/g);
-
-    if (!tokens) {
-        return "Error";
-    }
-
+    const tokens = expression.match(/((\d+\.?\d*)|(\.\d+)|[\+\-\*\/%])/g);
+    if (!tokens) { return "Error"; }
     const processedTokens = [];
     for (let i = 0; i < tokens.length; i++) {
         if (tokens[i] === '-') {
@@ -65,33 +61,23 @@ function calculate(expression) {
     let i = 0;
     while (i < processedTokens.length) {
         if (processedTokens[i] === '*') {
-            const result = parseFloat(processedTokens[i - 1]) * parseFloat(processedTokens[i + 1]);
-            processedTokens.splice(i - 1, 3, result.toString());
+            processedTokens.splice(i - 1, 3, (parseFloat(processedTokens[i - 1]) * parseFloat(processedTokens[i + 1])).toString());
             i = 0;
         } else if (processedTokens[i] === '/') {
-            const result = parseFloat(processedTokens[i - 1]) / parseFloat(processedTokens[i + 1]);
-            processedTokens.splice(i - 1, 3, result.toString());
+            processedTokens.splice(i - 1, 3, (parseFloat(processedTokens[i - 1]) / parseFloat(processedTokens[i + 1])).toString());
             i = 0;
         } else if (processedTokens[i] === '%') {
-            const result = parseFloat(processedTokens[i - 1]) % parseFloat(processedTokens[i + 1]);
-            processedTokens.splice(i - 1, 3, result.toString());
+            processedTokens.splice(i - 1, 3, (parseFloat(processedTokens[i - 1]) % parseFloat(processedTokens[i + 1])).toString());
             i = 0;
-        } else {
-            i++;
-        }
+        } else { i++; }
     }
     let result = parseFloat(processedTokens[0]);
     for (let j = 1; j < processedTokens.length; j += 2) {
         const operator = processedTokens[j];
         const nextNumber = parseFloat(processedTokens[j + 1]);
-
-        if (operator === '+') {
-            result += nextNumber;
-        } else if (operator === '-') {
-            result -= nextNumber;
-        }
+        if (operator === '+') { result += nextNumber; }
+        if (operator === '-') { result -= nextNumber; }
     }
-
     return isNaN(result) ? "Error" : result;
 }
 
