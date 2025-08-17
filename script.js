@@ -58,6 +58,10 @@ function calculate(expression) {
             processedTokens.push(tokens[i]);
         }
     }
+    const firstToken = processedTokens[0];
+    if (firstToken === '*' || firstToken === '/' || firstToken === '%' || firstToken === '+') {
+        return "Error"; 
+    }
     let i = 0;
     while (i < processedTokens.length) {
         if (processedTokens[i] === '*') {
