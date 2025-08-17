@@ -19,9 +19,11 @@ body {
 #display {
     background-color: rgb(114, 114, 114);
     color: black;
-    padding: 20px;
+    padding: 10px;
     border-radius: 6px;
     margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 #buttons {
