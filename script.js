@@ -16,11 +16,16 @@ button.forEach(btn => {
                 const result = calculate(display.value);
                 display.value = result;
                 lastAnswer = result;
-                if(display.value === "Error")
-                    lastAnswer = "";
+                if (display.value === "Error") {
+                    lastAnswer = 0;
+                }
             }
         } else if (buttonValue === "ans") {
-            display.value += lastAnswer;
+            if (display.value === "0" || display.value === "Error") {
+                display.value = lastAnswer;
+            } else {
+                display.value += lastAnswer;
+            }
         } else {
             if (display.value === "0" || display.value === "Error") {
                 display.value = buttonValue;
@@ -36,6 +41,13 @@ function calculate(expression) {
 
     if (!tokens) {
         return "Error";
+    }
+
+    for (let i = 0; i < tokens.length - 1; i++) {
+        const operators = ['+', '-', '*', '/', '%'];
+        if (operators.includes(tokens[i]) && tokens[i + 1] === '-') {
+            tokens.splice(i + 1, 2, `-${tokens[i+2]}`);
+        }
     }
 
     let i = 0;
