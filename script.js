@@ -26,6 +26,12 @@ button.forEach(btn => {
             } else {
                 display.value += lastAnswer;
             }
+        } else if (buttonValue === '.') {
+            const numbers = display.value.split(/[\+\-\*\/%]/);
+            const currentNumber = numbers[numbers.length - 1];
+            if (!currentNumber.includes('.')) {
+                display.value += buttonValue;
+            }
         } else {
             if (display.value === "0" || display.value === "Error") {
                 display.value = buttonValue;
@@ -37,42 +43,47 @@ button.forEach(btn => {
 });
 
 function calculate(expression) {
-    const tokens = expression.match(/-?\d+\.?\d*|[\+\-\*\/%]/g);
+    const tokens = expression.match(/(\d+\.?\d*|[\+\-\*\/%])/g);
 
     if (!tokens) {
         return "Error";
     }
 
-    for (let i = 0; i < tokens.length - 1; i++) {
-        const operators = ['+', '-', '*', '/', '%'];
-        if (operators.includes(tokens[i]) && tokens[i + 1] === '-') {
-            tokens.splice(i + 1, 2, `-${tokens[i + 2]}`);
+    const processedTokens = [];
+    for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i] === '-') {
+            if (i === 0 || ['+', '-', '*', '/', '%'].includes(tokens[i - 1])) {
+                processedTokens.push(tokens[i] + tokens[i + 1]);
+                i++;
+            } else {
+                processedTokens.push(tokens[i]);
+            }
+        } else {
+            processedTokens.push(tokens[i]);
         }
     }
-
     let i = 0;
-    while (i < tokens.length) {
-        if (tokens[i] === '*') {
-            const result = parseFloat(tokens[i - 1]) * parseFloat(tokens[i + 1]);
-            tokens.splice(i - 1, 3, result.toString());
+    while (i < processedTokens.length) {
+        if (processedTokens[i] === '*') {
+            const result = parseFloat(processedTokens[i - 1]) * parseFloat(processedTokens[i + 1]);
+            processedTokens.splice(i - 1, 3, result.toString());
             i = 0;
-        } else if (tokens[i] === '/') {
-            const result = parseFloat(tokens[i - 1]) / parseFloat(tokens[i + 1]);
-            tokens.splice(i - 1, 3, result.toString());
+        } else if (processedTokens[i] === '/') {
+            const result = parseFloat(processedTokens[i - 1]) / parseFloat(processedTokens[i + 1]);
+            processedTokens.splice(i - 1, 3, result.toString());
             i = 0;
-        } else if (tokens[i] === '%') {
-            const result = parseFloat(tokens[i - 1]) % parseFloat(tokens[i + 1]);
-            tokens.splice(i - 1, 3, result.toString());
+        } else if (processedTokens[i] === '%') {
+            const result = parseFloat(processedTokens[i - 1]) % parseFloat(processedTokens[i + 1]);
+            processedTokens.splice(i - 1, 3, result.toString());
             i = 0;
         } else {
             i++;
         }
     }
-
-    let result = parseFloat(tokens[0]);
-    for (let j = 1; j < tokens.length; j += 2) {
-        const operator = tokens[j];
-        const nextNumber = parseFloat(tokens[j + 1]);
+    let result = parseFloat(processedTokens[0]);
+    for (let j = 1; j < processedTokens.length; j += 2) {
+        const operator = processedTokens[j];
+        const nextNumber = parseFloat(processedTokens[j + 1]);
 
         if (operator === '+') {
             result += nextNumber;
