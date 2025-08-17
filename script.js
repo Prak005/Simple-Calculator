@@ -46,7 +46,7 @@ function calculate(expression) {
     for (let i = 0; i < tokens.length - 1; i++) {
         const operators = ['+', '-', '*', '/', '%'];
         if (operators.includes(tokens[i]) && tokens[i + 1] === '-') {
-            tokens.splice(i + 1, 2, `-${tokens[i+2]}`);
+            tokens.splice(i + 1, 2, `-${tokens[i + 2]}`);
         }
     }
 
@@ -83,3 +83,20 @@ function calculate(expression) {
 
     return isNaN(result) ? "Error" : result;
 }
+
+window.addEventListener('keydown', (e) => {
+    const key = e.key;
+    let button;
+    if (key === 'Enter') {
+        button = document.querySelector('button[value="equals"]');
+    } else if (key === 'Backspace') {
+        button = document.querySelector('button[value="del"]');
+    } else if (key === 'Escape') {
+        button = document.querySelector('button[value="ac"]');
+    } else {
+        button = document.querySelector(`button[value="${key}"]`);
+    }
+    if (button) {
+        button.click();
+    }
+});
